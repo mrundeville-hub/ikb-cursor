@@ -1,6 +1,8 @@
 # ikb-cursor
 
-A macOS cursor replacement: an International Klein Blue (`#002FA7`) circle that follows the pointer and morphs with the context.
+![ikb-cursor demo](docs/demo.gif)
+
+A macOS cursor replacement: a circle (white by default, any colour via a config file; International Klein Blue `#002FA7` shown in the name) that follows the pointer and morphs with the context.
 
 - **Default:** 14 px dot
 - **Over buttons, links, menu items:** grows to a 20 px ring (85% opacity)
@@ -20,6 +22,28 @@ Smooth animated transitions, ~1% CPU when the mouse is idle.
 - macOS 26+ (Tahoe) on Apple Silicon, tested on macOS 27
 - Xcode command line tools (`swiftc`)
 - **Accessibility permission** for the built binary (needed to detect text fields / buttons; without it you only get the plain dot)
+
+## Install
+
+```sh
+git clone https://github.com/mrundeville-hub/ikb-cursor
+cd ikb-cursor
+./install.sh
+```
+
+Then allow the printed binary in **System Settings → Privacy & Security → Accessibility** (drag the file into the list and switch it on), and restart it once:
+
+```sh
+launchctl kickstart -k gui/$(id -u)/local.ikb-cursor
+```
+
+Change the colour any time without rebuilding (default white, hot-reloaded within ~2 s):
+
+```sh
+echo 002FA7 > ~/.config/ikb-cursor/color   # International Klein Blue
+```
+
+Uninstall: `launchctl bootout gui/$(id -u)/local.ikb-cursor && rm ~/Library/LaunchAgents/local.ikb-cursor.plist && ./ikb-cursor --restore`
 
 ## Build and run
 
@@ -44,6 +68,10 @@ Stop and restore: `launchctl bootout gui/$(id -u)/local.ikb-cursor` (or `pkill i
 - Uses **private, undocumented** macOS APIs. They can change or break in any macOS update.
 - Some full-screen apps and games may show the system cursor.
 - If the process is killed uncleanly, run `./ikb-cursor --restore`.
+
+## The promo video
+
+`promo/` is a [HyperFrames](https://hyperframes.heygen.com) project (HTML → video). Render it with `cd promo && npm run render`.
 
 ## Credits
 

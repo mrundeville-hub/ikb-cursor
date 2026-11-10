@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --ground: #0b0f14;
+        --card: #141b24;
+        --card-hi: #1e2a3a;
+        --ink: #ffffff;
+        --dim: rgba(255, 255, 255, 0.55);
+        --ikb: #002fa7;
+        --font: "Inter", sans-serif;
+        --mono: "JetBrains Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root {
+        position: relative; width: 1920px; height: 1080px; overflow: hidden; color: var(--ink); font-family: var(--font);
+        background:
+          radial-gradient(900px 600px at 50% 105%, rgba(0, 47, 167, 0.55), transparent 70%),
+          var(--ground);
+      }
+      .abs { position: absolute; }
+      .center { left: 0; width: 1920px; text-align: center; }
+      .big { font-size: 168px; font-weight: 900; letter-spacing: -0.045em; line-height: 1; }
+      .tag { font-size: 40px; font-weight: 400; color: var(--dim); letter-spacing: -0.01em; }
+      .cap { font-size: 46px; font-weight: 700; letter-spacing: -0.02em; top: 840px; }
+      #s-intro, #s-stage, #s-install, #s-end { position: absolute; inset: 0; }
+
+      #btn { left: 460px; top: 500px; width: 400px; height: 112px; border-radius: 28px; background: var(--card-hi);
+             display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 700; }
+      #field { left: 1000px; top: 500px; width: 520px; height: 112px; border-radius: 28px; background: var(--card);
+               border: 3px solid rgba(255, 255, 255, 0.22); padding: 0 36px; display: flex; align-items: center;
+               font-size: 40px; font-weight: 400; }
+      #ph { color: rgba(255, 255, 255, 0.38); position: absolute; left: 36px; }
+      #typed span { opacity: 0; }
+      .lab { font-size: 28px; color: rgba(255, 255, 255, 0.4); top: 648px; }
+
+      /* cursor: group sits at (0,0); children are centred on it */
+      #cur { left: 0; top: 0; width: 0; height: 0; z-index: 50; }
+      #arrow { left: -6px; top: -4px; width: 48px; height: 66px; }
+      #dot { left: -33px; top: -33px; width: 66px; height: 66px; border-radius: 50%; background: #fff;
+             box-shadow: 0 0 12px rgba(0, 0, 0, 0.45); }
+      #bar { left: -5px; top: -33px; width: 10px; height: 66px; border-radius: 5px; background: #fff;
+             box-shadow: 0 0 12px rgba(0, 0, 0, 0.45); }
+      #ripple { left: -33px; top: -33px; width: 66px; height: 66px; border-radius: 50%; border: 4px solid #fff; }
+
+      #term { left: 210px; top: 380px; width: 1500px; height: 400px; border-radius: 28px; background: var(--card);
+              border: 2px solid rgba(255, 255, 255, 0.1); padding: 56px 64px; font-family: var(--mono); font-size: 36px; line-height: 1.9; }
+      #term .p { color: #6f8cff; }
+      #term .c { color: var(--dim); font-size: 30px; opacity: 0; }
+      #inst-h { top: 210px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="22.3" data-width="1920" data-height="1080">
+
+      <div id="s-intro" class="clip" data-start="0" data-duration="2.9" data-track-index="1" data-track-kind="graphics">
+        <div id="i-title" class="abs center big" style="top: 300px">ikb-cursor</div>
+        <div id="i-tag" class="abs center tag" style="top: 500px">A cursor that morphs with context.</div>
+      </div>
+
+      <div id="s-stage" class="clip" data-start="2.5" data-duration="10.4" data-track-index="1" data-track-kind="graphics">
+        <div id="btn" class="abs">Hover me</div>
+        <div id="field" class="abs"><span id="ph">Type here…</span><span id="typed"><span>h</span><span>e</span><span>l</span><span>l</span><span>o</span></span></div>
+        <div id="lab-b" class="abs lab" style="left: 460px; width: 400px; text-align: center">button</div>
+        <div id="lab-f" class="abs lab" style="left: 1000px; width: 520px; text-align: center">text field</div>
+        <div id="cap1" class="abs center cap">Grows over buttons</div>
+        <div id="cap2" class="abs center cap">Becomes a bar over text</div>
+        <div id="cap3" class="abs center cap">Back to a dot</div>
+      </div>
+
+      <div id="s-install" class="clip" data-start="12.8" data-duration="7.1" data-track-index="1" data-track-kind="graphics">
+        <div id="inst-h" class="abs center big" style="font-size: 96px">Install in 30 seconds</div>
+        <div id="term" class="abs">
+          <div class="l" id="l1"><span class="p">$ </span><span id="l1t"></span></div>
+          <div class="l" id="l2"><span class="p">$ </span><span id="l2t"></span></div>
+          <div class="c" id="l3">then: Settings → Privacy → Accessibility → allow ikb-cursor</div>
+        </div>
+      </div>
+
+      <div id="s-end" class="clip" data-start="19.6" data-duration="2.7" data-track-index="1" data-track-kind="graphics">
+        <div id="e-title" class="abs center big" style="top: 330px">ikb-cursor</div>
+        <div id="e-url" class="abs center tag" style="top: 530px; font-family: var(--mono); font-size: 36px">github.com/mrundeville-hub/ikb-cursor</div>
+        <div id="e-meta" class="abs center tag" style="top: 620px; font-size: 28px">MIT · macOS 26+ · Apple Silicon</div>
+      </div>
+
+      <div id="cur" class="abs clip" data-start="0" data-duration="12.7" data-track-index="2" data-track-kind="graphics">
+        <svg id="arrow" class="abs" viewBox="0 0 48 66"><path d="M4 2 L4 54 L17 42 L26 62 L35 58 L26 38 L44 38 Z" fill="#fff" stroke="#000" stroke-width="3" stroke-linejoin="round"/></svg>
+        <div id="ripple" class="abs"></div>
+        <div id="dot" class="abs"></div>
+        <div id="bar" class="abs"></div>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const E = "power3.inOut";
+
+      // typed install lines (per-character reveal)
+      function fillChars(id, text) {
+        const el = document.getElementById(id);
+        el.innerHTML = [...text].map((c) => `<span style="opacity:0">${c === " " ? "&nbsp;" : c}</span>`).join("");
+      }
+      fillChars("l1t", "git clone https://github.com/mrundeville-hub/ikb-cursor");
+      fillChars("l2t", "cd ikb-cursor && ./install.sh");
+      document.querySelectorAll("#l1, #l2").forEach((l) => (l.style.opacity = 1));
+
+      // initial states (gsap.set so frame 0 already shows them)
+      gsap.set("#cur", { x: 960, y: 720 });
+      gsap.set("#dot", { scale: 0, opacity: 1 }); gsap.set("#bar", { opacity: 0, scaleY: 0.6 }); gsap.set("#ripple", { opacity: 0, scale: 0.5 }); gsap.set("#arrow", { opacity: 0, scale: 0.9, transformOrigin: "4px 2px" });
+      gsap.set(["#cap1", "#cap2", "#cap3", "#lab-b", "#lab-f", "#btn", "#field"], { opacity: 0 });
+
+      // 0–2.9 intro: title in, arrow appears, morphs into the dot
+      tl.fromTo("#i-title", { y: 30, filter: "blur(14px)" }, { y: 0, filter: "blur(0px)", duration: 0.8, ease: "power4.out" }, 0);
+      tl.fromTo("#i-tag", { y: 20, opacity: 0.2 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 0.1);
+      tl.fromTo("#arrow", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.5);
+      tl.to("#arrow", { x: 6, y: 4, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0.8);
+      tl.to("#arrow", { opacity: 0, scale: 0.35, rotation: -25, duration: 0.35, ease: "power2.in" }, 1.7);
+      tl.fromTo("#dot", { scale: 0 }, { scale: 0.636, duration: 0.5, ease: "back.out(2.4)" }, 1.8);
+      tl.fromTo("#ripple", { opacity: 0.9, scale: 0.5 }, { opacity: 0, scale: 2.6, duration: 0.7, ease: "power2.out", immediateRender: false }, 1.85);
+      tl.to(["#i-title", "#i-tag"], { opacity: 0, y: -24, filter: "blur(10px)", duration: 0.4, ease: "power2.in" }, 2.45);
+
+      // 2.5–11.9 stage
+      tl.fromTo(["#btn", "#field"], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", stagger: 0.12 }, 2.7);
+      tl.fromTo(["#lab-b", "#lab-f"], { opacity: 0 }, { opacity: 1, duration: 0.5 }, 3.2);
+
+      // → button (ring: 60px, 85% alpha); the button lifts
+      tl.to("#cur", { x: 770, y: 556, duration: 1.1, ease: E }, 3.0);
+      tl.to("#dot", { scale: 0.909, opacity: 0.85, duration: 0.35, ease: "back.out(1.8)" }, 4.0);
+      tl.to("#btn", { scale: 1.06, backgroundColor: "#2c3e57", duration: 0.35, ease: "power3.out" }, 4.0);
+      tl.fromTo("#cap1", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 4.1);
+      tl.to("#cap1", { opacity: 0, y: -20, duration: 0.35, ease: "power2.in" }, 5.55);
+
+      // → text field (bar)
+      tl.to("#cur", { x: 1290, y: 556, duration: 1.2, ease: E }, 5.7);
+      tl.to("#btn", { scale: 1, backgroundColor: "#1e2a3a", duration: 0.4, ease: "power2.out" }, 6.0);
+      tl.to("#dot", { opacity: 0, scaleX: 0.1, duration: 0.3, ease: "power2.in" }, 6.95);
+      tl.fromTo("#bar", { opacity: 0, scaleY: 0.6 }, { opacity: 1, scaleY: 1, duration: 0.35, ease: "back.out(2)" }, 7.0);
+      tl.to("#field", { borderColor: "rgba(255,255,255,0.7)", duration: 0.3 }, 7.05);
+      tl.fromTo("#cap2", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 7.1);
+      tl.to("#ph", { opacity: 0, duration: 0.2 }, 7.7);
+      tl.to("#bar", { scaleX: 1.5, duration: 0.1, yoyo: true, repeat: 1, ease: "power2.out" }, 7.6);
+      tl.fromTo("#typed span", { opacity: 0 }, { opacity: 1, duration: 0.02, stagger: 0.18 }, 7.8);
+      tl.to("#cur", { x: 1290 + 0, duration: 0.01 }, 7.8);
+      tl.to("#cap2", { opacity: 0, y: -20, duration: 0.35, ease: "power2.in" }, 9.35);
+
+      // → back to empty space (dot)
+      tl.to("#cur", { x: 960, y: 770, duration: 1.2, ease: E }, 9.5);
+      tl.to("#bar", { opacity: 0, scaleY: 0.6, duration: 0.3, ease: "power2.in" }, 10.55);
+      tl.to("#dot", { opacity: 1, scaleX: 0.636, scale: 0.636, duration: 0.4, ease: "back.out(2)" }, 10.6);
+      tl.to("#field", { borderColor: "rgba(255,255,255,0.22)", duration: 0.4 }, 10.6);
+      tl.fromTo("#cap3", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 10.7);
+
+      // stage out, cursor out
+      tl.to(["#btn", "#field", "#lab-b", "#lab-f", "#cap3"], { opacity: 0, y: -30, duration: 0.4, ease: "power2.in", stagger: 0.04 }, 12.4);
+      tl.to("#cur", { opacity: 0, duration: 0.3 }, 12.5);
+
+      // install scene
+      tl.fromTo("#inst-h", { opacity: 0, y: 30, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power4.out" }, 12.95);
+      tl.fromTo("#term", { opacity: 0, y: 40, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "power3.out" }, 13.1);
+      tl.fromTo("#l1t span", { opacity: 0 }, { opacity: 1, duration: 0.02, stagger: 0.028 }, 13.8);
+      tl.fromTo("#l2t span", { opacity: 0 }, { opacity: 1, duration: 0.02, stagger: 0.04 }, 15.6);
+      tl.fromTo("#l3", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 16.8);
+      tl.to(["#inst-h", "#term"], { opacity: 0, y: -30, duration: 0.4, ease: "power2.in" }, 19.4);
+
+      // end card
+      tl.fromTo("#e-title", { opacity: 0, y: 30, filter: "blur(12px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power4.out" }, 19.75);
+      tl.fromTo(["#e-url", "#e-meta"], { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.12 }, 20.0);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

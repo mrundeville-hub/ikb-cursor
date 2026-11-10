@@ -1,3 +1,6 @@
 ikb-cursor
 *.bak
 .DS_Store
+promo/renders/
+promo/.hyperframes/
+promo/node_modules/
