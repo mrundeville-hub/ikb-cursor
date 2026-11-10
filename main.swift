@@ -18,7 +18,13 @@ import ApplicationServices
 @_silgen_name("CGSRegisterCursorWithImages") func CGSRegisterCursorWithImages(_ cid: Int32, _ name: UnsafeMutablePointer<CChar>, _ setGlobally: Bool, _ instantly: Bool, _ size: NSSize, _ hotspot: CGPoint, _ frames: UInt, _ dur: CGFloat, _ imgs: CFArray, _ seed: UnsafeMutablePointer<Int32>) -> Int32
 
 enum Shape { case dot, link, text, press }
-let ikb = NSColor(srgbRed: 0, green: 0x2F/255.0, blue: 0xA7/255.0, alpha: 1).cgColor
+// Colour: optional hex in ~/.config/ikb-cursor/color (e.g. "FFFFFF" or "002FA7"), re-read at runtime; default white.
+func loadColor() -> CGColor {
+    let path = NSString(string: "~/.config/ikb-cursor/color").expandingTildeInPath
+    let hex = ((try? String(contentsOfFile: path, encoding: .utf8)) ?? "FFFFFF").trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "#", with: "")
+    guard hex.count == 6, let v = UInt32(hex, radix: 16) else { return NSColor.white.cgColor }
+    return NSColor(srgbRed: CGFloat((v >> 16) & 255) / 255, green: CGFloat((v >> 8) & 255) / 255, blue: CGFloat(v & 255) / 255, alpha: 1).cgColor
+}
 let S: CGFloat = 80  // window size
 let textRoles: Set<String> = ["AXTextField", "AXTextArea", "AXComboBox", "AXSearchField", "AXSecureTextField"]
 let linkRoles: Set<String> = ["AXButton", "AXLink", "AXMenuItem", "AXMenuBarItem", "AXCheckBox", "AXRadioButton", "AXPopUpButton", "AXTab", "AXDisclosureTriangle", "AXMenuButton"]
@@ -30,7 +36,8 @@ win.level = NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
 win.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]
 let view = NSView(frame: NSRect(x: 0, y: 0, width: S, height: S)); view.wantsLayer = true
 win.contentView = view
-let dot = CALayer(); dot.position = CGPoint(x: S/2, y: S/2); dot.backgroundColor = ikb
+let dot = CALayer(); dot.position = CGPoint(x: S/2, y: S/2); dot.backgroundColor = loadColor()
+dot.shadowColor = NSColor.black.cgColor; dot.shadowOpacity = 0.35; dot.shadowRadius = 2; dot.shadowOffset = .zero  // keeps a white cursor visible on light backgrounds
 view.layer!.addSublayer(dot)
 win.orderFrontRegardless()
 
@@ -85,6 +92,7 @@ Timer.scheduledTimer(withTimeInterval: 1.0/120, repeats: true) { _ in
     let moved = p != lastP; lastP = p
     if moved { win.setFrameOrigin(NSPoint(x: p.x - S/2, y: p.y - S/2)); idle = 0 } else { idle += 1 }
     tick += 1
+    if tick % 240 == 0 { dot.backgroundColor = loadColor() }
     if tick % 240 == 0 { makeInvisible() }  // re-assert, other apps may re-register cursors
     if tick % 4 == 0 && (moved || idle < 30 || tick % 30 == 0) {
         // hit-test per app (skipping our own overlay window, which otherwise answers for the system-wide query)
